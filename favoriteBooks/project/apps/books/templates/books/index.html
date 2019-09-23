@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Favorite Books</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body class="">
+    <nav class="navbar navbar-light bg-light justify-content-between border-bottom">
+        <h2 class=""><a class="text-dark text-decoration-none" href="/books">Welcome, {{ user.firstName }}</a></h2>
+        <div class="d-inline">
+            <a href="/logout">Log out</a>
+        </div>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="container col-5 m-4">
+            <h2 class="">Add a Favorite Book</h2>
+            <form class="text-left" action="{% url 'books:addBook' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Title</label>
+                    {% if messages %}
+                        {% for message in messages %}
+                        {% if message.tags == "title error" %}
+                            <p  class="mx-2 d-inline text-danger">{{ message }}</p>
+                        {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <input class="form-control" type="text" name="title">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    {% if messages %}
+                        {% for message in messages %}
+                        {% if message.tags == "desc error" %}
+                            <p  class="mx-2 d-inline text-danger">{{ message }}</p>
+                        {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <textarea name="description" class="form-control" rows="5"></textarea>
+                </div>
+                <div class="text-center">
+                    <input class="btn btn-primary" type="submit" value="Add">
+                </div>
+            </form>
+        </div>
+        <div class="container col-5 m-4">
+            <div class="mx-auto">
+                <h2>All Books</h2>
+                {% for book in allBooks %}
+                    <a class="font-weight-bold" href="{% url 'books:showBook' bookId=book.id %}">{{book.title}}</a>
+                    <p class="my-2 w-auto">(added by {{book.uploader.firstName}} {{book.uploader.lastName}})</p>
+                    {% if book.uploader.id == request.session.userid %}
+                    <p class="font-italic">this is one of your favorites</p>
+                    {% elif book in user.likedBooks.all %}
+                    <p class="font-italic">this is one of your favorites</p>
+                    {% else %}
+                    <a class="d-block" href="{{book.id}}/addFavoriteHome">Add to Favorites</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+
+</html>
